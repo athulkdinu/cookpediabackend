@@ -8,7 +8,7 @@ const routes = require("./routes")
 
 const cookpediaserver =express()
 
-cookpediaserver.use(cors)
+cookpediaserver.use(cors())
 
 cookpediaserver.use(express.json())
 cookpediaserver.use(routes)
