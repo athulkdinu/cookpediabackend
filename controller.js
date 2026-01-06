@@ -27,22 +27,42 @@ exports.getHomeRecipesController = async (req, res) => {
 //register controller
 
 exports.registerController = async (req, res) => {
-  const { username, email, password} = req.body;
+  const { username, email, password } = req.body;
   console.log(username, email, password);
   try {
     const existingUser = await users.findOne({ email });
     if (existingUser) {
       res.status(401).json(`User already exist`);
     } else {
-        const newUser = new users({
-        username, email, password, profile:""
+      const newUser = new users({
+        username, email, password, profile: ""
       });
       await newUser.save();
       res.status(200).json(newUser);
-    }   
-    } catch (error) {
-        res.status(500).json(error);
     }
+  } catch (error) {
+    res.status(500).json(error);
+  }
 };
 
 //login
+
+exports.loginController = async (req, res) => {
+  const { email, password } = req.body;
+  console.log(email, password);
+  try {
+    const existingUser = await users.findOne({ email });
+    if (!existingUser) {
+      res.status(401).json(`User not found`);
+    } else {
+      if (existingUser.password !== password) {
+        res.status(401).json(`Invalid credentials`);
+      }
+      else {
+        res.status(200).json(existingUser);
+      }
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
