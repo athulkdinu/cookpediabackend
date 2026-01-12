@@ -7,7 +7,7 @@ const jwtMidlleware =(req,res,next)=>{
         const token = authHeader.split(" ")[1]
     if(token){
         try {
-            const jwtResponse =jwt.verify(token,process.env.JWTSCRET)
+            const jwtResponse =jwt.verify(token,process.env.JWTSECRET)
             req.role =jwtResponse.role
             req.payload=jwtResponse.email
             next()
@@ -19,7 +19,7 @@ const jwtMidlleware =(req,res,next)=>{
         }
     } else {
         res.status(404).json("Authorization failed ... token missing")
-        }
     }
-    
+}
+
 module.exports = jwtMidlleware

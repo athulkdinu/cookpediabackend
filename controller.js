@@ -85,7 +85,7 @@ exports.viewRecipeController = async (req,res)=>{
   console.log("inside viewrecipe controller");
   const {id}= req.params
   try {
-    const viewDetails =await recipes.findById({_id:id})
+    const viewDetails =await recipes.findById(id)
     res.status(200).json(viewDetails)
   } catch (error) {
     res.status(500).json(error)
