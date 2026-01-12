@@ -1,5 +1,5 @@
 const express = require("express");
-const { getAllRecipesController, getHomeRecipesController, registerController, loginController, viewRecipeController } = require("./controller");
+const { getAllRecipesController, getHomeRecipesController, registerController, loginController, viewRecipeController, relatedRecipeController } = require("./controller");
 const jwtMidlleware = require("./middleware/jwtMiddleware");
 
 const routes =express.Router()
@@ -20,5 +20,9 @@ routes.post("/login", loginController);
 //view recipe
 
 routes.get("/view-recipe/:id",jwtMidlleware,viewRecipeController)
+
+//related recipe
+
+routes.get("/related-recipes",relatedRecipeController)
 
 module.exports = routes;

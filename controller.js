@@ -91,3 +91,17 @@ exports.viewRecipeController = async (req,res)=>{
     res.status(500).json(error)
   }
 }
+
+// related Recipe Controller
+exports.relatedRecipeController = async (req, res) => {
+  console.log("Inside Related Recipe Controller");
+  const cuisine = req.query.cuisine
+
+  try {
+    const relatedRecipe = await recipes.find({ cuisine })
+    res.status(200).json(relatedRecipe)
+
+  } catch (error) {
+    res.status(500).json(error)
+  }
+}
