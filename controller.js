@@ -1,3 +1,4 @@
+const recipes = require("./model/recipemodel");
 const recipe = require("./model/recipemodel");
 const users = require("./model/usermodel");
 const bcrypt = require('bcryptjs');
@@ -66,7 +67,7 @@ exports.loginController = async (req, res) => {
       let isuserLoggedin =existingUser.role=="user" ? await bcrypt .compare(password, existingUser.password) : password==existingUser.password;
       if (isuserLoggedin) {
         const token = jwt.sign({email,role:existingUser.role}, process.env.JWTSECRET);
-        res.status(200).json({existingUser,token});
+        res.status(200).json({user:existingUser,token});
       }
       else{
         res.status(401).json(`Invalid credentials`);
@@ -78,3 +79,15 @@ exports.loginController = async (req, res) => {
      res.status(500).json(error); 
   }
 };
+
+// get a single recipe
+exports.viewRecipeController = async (req,res)=>{
+  console.log("inside viewrecipe controller");
+  const {id}= req.params
+  try {
+    const viewDetails =await recipes.findById({_id:id})
+    res.status(200).json(viewDetails)
+  } catch (error) {
+    res.status(500).json(error)
+  }
+}
