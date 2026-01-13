@@ -1,5 +1,5 @@
 const express = require("express");
-const { getAllRecipesController, getHomeRecipesController, registerController, loginController, viewRecipeController, relatedRecipeController } = require("./controller");
+const { getAllRecipesController, getHomeRecipesController, registerController, loginController, viewRecipeController, relatedRecipeController, addToSavedRecipeController, getSavedRecipesController, deleteSaveRecipeController } = require("./controller");
 const jwtMidlleware = require("./middleware/jwtMiddleware");
 
 const routes =express.Router()
@@ -25,6 +25,13 @@ routes.get("/view-recipe/:id",jwtMidlleware,viewRecipeController)
 
 routes.get("/related-recipes",relatedRecipeController)
 
-//sav
+
+//save receipie 
+routes.post("/recipes/:id/save",jwtMidlleware,addToSavedRecipeController)
+
+//getsaved receipei
+routes.get("/recipes/saved", jwtMidlleware,getSavedRecipesController);
+//delete
+routes.delete("/saved-receipes/:id/remove",jwtMidlleware, deleteSaveRecipeController);
 
 module.exports = routes;
