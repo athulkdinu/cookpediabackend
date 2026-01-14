@@ -4,6 +4,7 @@ const users = require("./model/usermodel");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const saveRecipes = require("../backend/model/savedRecipeModel");
+const downloads = require("../backend/model/downloadRecipesModel")
 
 // GET ALL RECIPES
 exports.getAllRecipesController = async (req, res) => {
@@ -149,6 +150,49 @@ exports.deleteSaveRecipeController = async (req, res) => {
   try {
     const deleteRecipe = await saveRecipes.findByIdAndDelete(id)
     res.status(200).json(deleteRecipe)
+  } catch (err) {
+    res.status(500).json(err)
+  }
+
+  //add to dewnload controller
+
+  exports.addToDownloadController = async (req, res) => {
+    console.log("Inside add To DownloadController");
+    const { id } = req.params
+    const userMail = req.payload
+    const { name, cuisine, image } = req.body
+    try {
+      const existingRecipe = await downloads.findOne({ recipeId: id })
+      if (existingRecipe) {
+        //update count
+        existingRecipe.count += 1
+        await existingRecipe.save()
+        res.status(200).json(existingRecipe)
+      } else {
+        // add recipe 
+        const newDownload = new downloads({
+          recipeId: id, recipeName: name, recipeImage: image, recipeCuisine: cuisine, count: 1, userMail
+        })
+        await newDownload.save()
+        res.status(200).json(newDownload)
+      }
+    } catch (err) {
+      res.status(500).json(err)
+    }
+  }
+
+  
+
+
+
+}
+//get download reccipes
+  exports.getDownloadedRecipesController = async (req, res) => {
+  console.log("Inside getDownloadedRecipesController");
+  const userMail = req.payload
+  try {
+    const allDownloadedRecipes = await downloads.find({ userMail })
+    res.status(200).json(allDownloadedRecipes)
   } catch (err) {
     res.status(500).json(err)
   }
