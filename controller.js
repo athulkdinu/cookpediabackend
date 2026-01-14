@@ -68,7 +68,7 @@ exports.loginController = async (req, res) => {
     if (existingUser) {
       let isuserLoggedin = existingUser.role == "user" ? await bcrypt.compare(password, existingUser.password) : password == existingUser.password;
       if (isuserLoggedin) {
-        const token = jwt.sign({ email, role: existingUser.role,userId:existingUser._id }, process.env.JWTSECRET);
+        const token = jwt.sign({ email, role: existingUser.role, userId: existingUser._id }, process.env.JWTSECRET);
         res.status(200).json({ user: existingUser, token });
       }
       else {
@@ -172,7 +172,7 @@ exports.addToDownloadController = async (req, res) => {
       return res.status(200).json(existingRecipe)
     }
 
-    const newDownload = new downloads({  recipeId: id, recipeName: name, recipeImage: image, recipeCuisine: cuisine, count: 1, userMail})
+    const newDownload = new downloads({ recipeId: id, recipeName: name, recipeImage: image, recipeCuisine: cuisine, count: 1, userMail })
     await newDownload.save()
     return res.status(200).json(newDownload)
   } catch (err) {
@@ -192,8 +192,16 @@ exports.getDownloadedRecipesController = async (req, res) => {
   }
 }
 
-exports.updateProfileController=async(req,res)=>{
-  const id =req.userId
+// update Profile
+exports.updateProfileController = async (req, res) => {
+  const id = req.userId;
   console.log(id);
-  res.status(200).json(`user Received`)
-}
+  const { profileImage } = req.body;
+  try {
+    const updateProfile = await users.findByIdAndUpdate({ _id: id }, { profile: profileImage }, { new: true });
+    await updateProfile.save()
+    res.status(200).json(updateProfile);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
