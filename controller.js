@@ -68,7 +68,7 @@ exports.loginController = async (req, res) => {
     if (existingUser) {
       let isuserLoggedin = existingUser.role == "user" ? await bcrypt.compare(password, existingUser.password) : password == existingUser.password;
       if (isuserLoggedin) {
-        const token = jwt.sign({ email, role: existingUser.role }, process.env.JWTSECRET);
+        const token = jwt.sign({ email, role: existingUser.role,userId:existingUser._id }, process.env.JWTSECRET);
         res.status(200).json({ user: existingUser, token });
       }
       else {
