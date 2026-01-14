@@ -1,5 +1,5 @@
 const express = require("express");
-const { getAllRecipesController, getHomeRecipesController, registerController, loginController, viewRecipeController, relatedRecipeController, addToSavedRecipeController, getSavedRecipesController, deleteSaveRecipeController } = require("./controller");
+const { getAllRecipesController, getHomeRecipesController, registerController, loginController, viewRecipeController, relatedRecipeController, addToSavedRecipeController, getSavedRecipesController, deleteSaveRecipeController, addToDownloadController, getDownloadedRecipesController } = require("./controller");
 const jwtMidlleware = require("./middleware/jwtMiddleware");
 
 const routes =express.Router()
@@ -33,5 +33,9 @@ routes.post("/recipes/:id/save",jwtMidlleware,addToSavedRecipeController)
 routes.get("/recipes/saved", jwtMidlleware,getSavedRecipesController);
 //delete
 routes.delete("/saved-receipes/:id/remove",jwtMidlleware, deleteSaveRecipeController);
+//download recipe
+routes.put("/recipes/:id/download", jwtMidlleware, addToDownloadController);
+//get downloaded recipes
+routes.get("/user-downloads", jwtMidlleware, getDownloadedRecipesController);
 
 module.exports = routes;

@@ -153,47 +153,41 @@ exports.deleteSaveRecipeController = async (req, res) => {
   } catch (err) {
     res.status(500).json(err)
   }
-
-  //add to dewnload controller
-
-  exports.addToDownloadController = async (req, res) => {
-    console.log("Inside add To DownloadController");
-    const { id } = req.params
-    const userMail = req.payload
-    const { name, cuisine, image } = req.body
-    try {
-      const existingRecipe = await downloads.findOne({ recipeId: id })
-      if (existingRecipe) {
-        //update count
-        existingRecipe.count += 1
-        await existingRecipe.save()
-        res.status(200).json(existingRecipe)
-      } else {
-        // add recipe 
-        const newDownload = new downloads({
-          recipeId: id, recipeName: name, recipeImage: image, recipeCuisine: cuisine, count: 1, userMail
-        })
-        await newDownload.save()
-        res.status(200).json(newDownload)
-      }
-    } catch (err) {
-      res.status(500).json(err)
-    }
-  }
-
-  
-
-
-
 }
-//get download reccipes
-  exports.getDownloadedRecipesController = async (req, res) => {
+
+//add to download controller
+exports.addToDownloadController = async (req, res) => {
+  console.log("Inside add To DownloadController");
+  const { id } = req.params
+  const userMail = req.payload
+  const { name, cuisine, image } = req.body
+
+  try {
+    // per-user downloads list + count
+    const existingRecipe = await downloads.findOne({ recipeId: id, userMail })
+
+    if (existingRecipe) {
+      existingRecipe.count += 1
+      await existingRecipe.save()
+      return res.status(200).json(existingRecipe)
+    }
+
+    const newDownload = new downloads({  recipeId: id, recipeName: name, recipeImage: image, recipeCuisine: cuisine, count: 1, userMail})
+    await newDownload.save()
+    return res.status(200).json(newDownload)
+  } catch (err) {
+    return res.status(500).json(err)
+  }
+}
+
+//get downloaded recipes
+exports.getDownloadedRecipesController = async (req, res) => {
   console.log("Inside getDownloadedRecipesController");
   const userMail = req.payload
   try {
     const allDownloadedRecipes = await downloads.find({ userMail })
-    res.status(200).json(allDownloadedRecipes)
+    return res.status(200).json(allDownloadedRecipes)
   } catch (err) {
-    res.status(500).json(err)
+    return res.status(500).json(err)
   }
 }
