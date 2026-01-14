@@ -191,3 +191,9 @@ exports.getDownloadedRecipesController = async (req, res) => {
     return res.status(500).json(err)
   }
 }
+
+exports.updateProfileController=async(req,res)=>{
+  const id =req.userId
+  console.log(id);
+  res.status(200).json(`user Received`)
+}

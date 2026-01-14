@@ -10,6 +10,8 @@ const jwtMidlleware =(req,res,next)=>{
             const jwtResponse =jwt.verify(token,process.env.JWTSECRET)
             req.role =jwtResponse.role
             req.payload=jwtResponse.email
+            req.userId = jwtResponse.userId
+
             next()
         } catch (err) {
             res.status(500).json(err)
