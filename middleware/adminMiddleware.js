@@ -1,26 +1,23 @@
-const jwt = require('jsonwebtoken')
-
-const adminJwtMiddleware = (req, res, next) => {
-    console.log("Inside admin jwt Middleware");
-    const token = req.headers['authorization'].split(" ")[1]
-    if (token) {
-        try {
-            const jwtResponse = jwt.verify(token, process.env.JWTSECRET)
-            req.role = jwtResponse.role
-            req.payload = jwtResponse.email
-            req.userId = jwtResponse.userId
-            if (jwtResponse.role == "admin") {
-                next()
-            } else {
-                res.status(401).json(`Authorization Failed... Only Admin can Access our Resources.`)
-            }
-
-        } catch (err) {
-            res.status(500).json(err)
-        }
+exports.loginController = async (req, res) => {
+  console.log("inside logincontroller");
+  const { email, password } = req.body;
+  console.log(email, password);
+  try {
+    const existingUser = await users.findOne({ email });
+    if (existingUser) {
+      
+      let isuserLoggedin = existingUser ? await bcrypt.compare(password, existingUser.password) : password == existingUser.password;
+      if (isuserLoggedin) {
+        const token = jwt.sign({ email, role: existingUser.role, userId: existingUser._id }, process.env.JWTSECRET);
+        res.status(200).json({ user: existingUser, token });
+      }
+      else {
+        res.status(401).json(`Invalid credentials`);
+      }
     } else {
-        res.status(404).json("Authorization failed... Token Missing!!!")
+      res.status(401).json(`invalid email ... please register`);
     }
-}
-
-module.exports= adminJwtMiddleware
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
