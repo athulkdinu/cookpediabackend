@@ -1,6 +1,7 @@
 const express = require("express");
 const { getAllRecipesController, getHomeRecipesController, registerController, loginController, viewRecipeController, relatedRecipeController, addToSavedRecipeController, getSavedRecipesController, deleteSaveRecipeController, addToDownloadController, getDownloadedRecipesController, updateProfileController, getAllUsersController } = require("./controller");
 const jwtMidlleware = require("./middleware/jwtMiddleware");
+const adminJwtMiddleware = require("./middleware/adminMiddleware");
 
 const routes =express.Router()
 // GET ALL RECIPES
@@ -39,7 +40,7 @@ routes.put("/recipes/:id/download", jwtMidlleware, addToDownloadController);
 routes.get("/user-downloads", jwtMidlleware, getDownloadedRecipesController);
 //update
 routes.put("/update-profile",jwtMidlleware,updateProfileController)
-//users
+
 // get all users
-routes.get("/all-users", getAllUsersController)
+routes.get("/all-users",adminJwtMiddleware, getAllUsersController)
 module.exports = routes;
