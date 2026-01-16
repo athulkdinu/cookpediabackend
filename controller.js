@@ -205,3 +205,14 @@ exports.updateProfileController = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
+
+exports.getAllUsersController = async (req, res) => {
+    try {
+        const allUsers = await users.find({ role: { $ne: "admin" } })
+        res.status(200).json(allUsers)
+
+    } catch (error) {
+        res.status(500).json(error)
+    }
+}
